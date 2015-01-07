@@ -9,12 +9,15 @@ public class Player : MonoBehaviour
     private float syncDelay = 0f;
     private float syncTime = 0f;
     private Vector3 syncStartPosition = Vector3.zero;
-    private Vector3 syncEndPosition = Vector3.zero;
+	private Vector3 syncEndPosition = Vector3.zero;
+	
+	private Quaternion syncStartOrit = Quaternion.identity;
 
     void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
     {
         Vector3 syncPosition = Vector3.zero;
-        Vector3 syncVelocity = Vector3.zero;
+		Vector3 syncVelocity = Vector3.zero;
+		Vector3 syncQrit = Vector3.zero;
         if (stream.isWriting)
         {
             syncPosition = rigidbody.position;
@@ -22,11 +25,15 @@ public class Player : MonoBehaviour
 
             syncPosition = rigidbody.velocity;
             stream.Serialize(ref syncVelocity);
+			
+			syncQrit = transform.rotation;
+			stream.Serialize(ref syncQrit);
         }
         else
         {
             stream.Serialize(ref syncPosition);
-            stream.Serialize(ref syncVelocity);
+			stream.Serialize(ref syncVelocity);
+			stream.Serialize(ref syncQrit);
 
             syncTime = 0f;
             syncDelay = Time.time - lastSynchronizationTime;
@@ -34,6 +41,8 @@ public class Player : MonoBehaviour
 
             syncEndPosition = syncPosition + syncVelocity * syncDelay;
             syncStartPosition = rigidbody.position;
+
+			syncStartOrit = syncQrit;
         }
     }
 
@@ -76,6 +85,8 @@ public class Player : MonoBehaviour
         syncTime += Time.deltaTime;
 
         rigidbody.position = Vector3.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
+
+		transform.rotation = syncStartOrit;
     }
 
 
