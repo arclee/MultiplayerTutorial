@@ -17,7 +17,7 @@ public class Player : MonoBehaviour
     {
         Vector3 syncPosition = Vector3.zero;
 		Vector3 syncVelocity = Vector3.zero;
-		Vector3 syncQrit = Vector3.zero;
+		Quaternion syncQrit = Quaternion.identity;
         if (stream.isWriting)
         {
             syncPosition = rigidbody.position;
