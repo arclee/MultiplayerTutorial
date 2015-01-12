@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
+using GooglePlayGames;
 using GooglePlayGames.BasicApi.Multiplayer;
 
 public class GameGPSRTInvListener : RealTimeMultiplayerListener
 {
-	
+	public GameGPS gameGPS;
 	/// <summary>
 	/// Called during room setup to notify of room setup progress.
 	/// </summary>
@@ -12,6 +13,7 @@ public class GameGPSRTInvListener : RealTimeMultiplayerListener
 	void RealTimeMultiplayerListener.OnRoomSetupProgress(float percent)
 	{
 		Debug.Log("OnRoomSetupProgress:" + percent);
+		gameGPS.debugText.text = "OnRoomSetupProgress:" + percent.ToString();
 	}
 	
 	/// <summary>
@@ -23,6 +25,20 @@ public class GameGPSRTInvListener : RealTimeMultiplayerListener
 	{
 		
 		Debug.Log("OnRoomConnected:" + success);
+
+		
+		GameNetPackage gk = new GameNetPackage();
+		gk.cmdtype = 123;
+		
+		GameNetScore gns = new GameNetScore();
+		gns.score = 9987;
+		gk.data = gns;
+		
+		byte[] inbyte = GameNetPackageTest.ObjectToByteArray(gk);
+		bool reliable = true;
+		PlayGamesPlatform.Instance.RealTime.SendMessageToAll(reliable, inbyte);
+		
+		gameGPS.debugText.text = "OnRoomConnected" + success.ToString();
 	}
 
 	
@@ -49,8 +65,20 @@ public class GameGPSRTInvListener : RealTimeMultiplayerListener
 		for (int i = 0; i < participantIds.Length; i++)
 		{
 			Debug.Log("OnPeersConnected:" + participantIds[i]);
-
 		}
+		
+		GameNetPackage gk = new GameNetPackage();
+		gk.cmdtype = 123;
+		
+		GameNetScore gns = new GameNetScore();
+		gns.score = 9987;
+		gk.data = gns;
+		
+		byte[] inbyte = GameNetPackageTest.ObjectToByteArray(gk);
+		bool reliable = true;
+		PlayGamesPlatform.Instance.RealTime.SendMessageToAll(reliable, inbyte);
+		
+		gameGPS.debugText.text = "OnPeersConnected";
 	}
 
 	
@@ -79,7 +107,13 @@ public class GameGPSRTInvListener : RealTimeMultiplayerListener
 	{
 		Debug.Log("OnRealTimeMessageReceived:" + " isReliable:" + isReliable + " senderId:"+senderId
 		          + data);
+
 		
+		GameNetPackage ogk = (GameNetPackage)GameNetPackageTest.ByteArrayToObject(data);		
+		Debug.Log(ogk.cmdtype);
+		GameNetScore ogs = (GameNetScore)ogk.data;
+		Debug.Log(ogs.score);
+		gameGPS.debugText.text = ogk.cmdtype.ToString() + " " + ogs.score.ToString();
 	}
 
 

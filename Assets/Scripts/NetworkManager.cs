@@ -90,6 +90,8 @@ public class NetworkManager : MonoBehaviour
 			
 			if (GUI.Button(new Rect(100, 300, 250, 50), "Create Server"))
 			{
+				MasterServer.ipAddress = "127.0.0.1";
+				MasterServer.port = 10002;
 				//Network.incomingPassword = serverPassword;
 				bool useNat = !Network.HavePublicAddress();
 				int sp = 0;
@@ -110,6 +112,8 @@ public class NetworkManager : MonoBehaviour
 			
 			if (GUI.Button(new Rect(100, 400, 250, 50), "Connect GUID"))
 			{
+				MasterServer.ipAddress = "127.0.0.1";
+				MasterServer.port = 10002;
 				//bool useNat = !Network.HavePublicAddress();
 				Network.useProxy = isServerUseProxy;
 				int sp = 0;
@@ -150,6 +154,7 @@ public class NetworkManager : MonoBehaviour
 				+ Network.player.ipAddress
 				+ "\n"
 				+ Network.player.port + " "+ Network.HavePublicAddress();
+
     }
 
 
@@ -230,18 +235,7 @@ public class NetworkManager : MonoBehaviour
 		if (w.error != null)
 		{			
 			Debug.Log("server down " + url);
-			debugText.text = "getip server down " + url + " " + w.error;
-
-			
-			debugText.text += phpret
-				+ "\n"
-					+ Network.player.externalIP
-					+ "\n"
-					+ Network.player.externalPort
-					+ "\n"
-					+ Network.player.ipAddress
-					+ "\n"
-					+ Network.player.port + " "+ Network.HavePublicAddress();
+			phpret = "getip server down " + url + " " + w.error;
 		}
 		else
 		{
@@ -256,18 +250,19 @@ public class NetworkManager : MonoBehaviour
 				success = false;
 				
 			}
-			
-			debugText.text = phpret
-				+ "\nei"
-					+ Network.player.externalIP
-					+ "\nep:"
-					+ Network.player.externalPort
-					+ "\n:"
-					+ Network.player.ipAddress
-					+ "\n"
-					+ Network.player.port + " "+ Network.HavePublicAddress()
-					+ "\n"
-					+ Network.player.guid;
+
 		}
+		
+		debugText.text = phpret
+			+ "\nei"
+				+ Network.player.externalIP
+				+ "\nep:"
+				+ Network.player.externalPort
+				+ "\n:"
+				+ Network.player.ipAddress
+				+ "\n"
+				+ Network.player.port + " "+ Network.HavePublicAddress()
+				+ "\n"
+				+ Network.player.guid;
 	}
 }
