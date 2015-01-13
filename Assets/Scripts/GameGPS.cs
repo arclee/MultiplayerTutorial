@@ -34,6 +34,12 @@ public class GameGPS : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
 	{
+		//有時受邀方不會收到 OnInvitationReceived 事件, 主因是玩家手機由的 google paly 設定關閉了通知.
+		//1.手機裡有  "Google 設定" 則可以點擊	.
+		//  Google 設定-> Play 遊戲 -> 設定 (下拉選帳號) -> 多人對戰遊戲通知(打勾) 等.
+		//2.一般設定方法.
+		// 設定 -> 帳號 -> 同步 -> 開啓自動同步.
+
 		GooglePlayGames.BasicApi.PlayGamesClientConfiguration config = new GooglePlayGames.BasicApi.PlayGamesClientConfiguration.Builder()
 			// registers a callback to handle game invitations.
 			.WithInvitationDelegate(OnInvitationReceived) 
