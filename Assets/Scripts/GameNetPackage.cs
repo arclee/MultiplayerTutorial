@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public class GameNetPackage
@@ -13,6 +14,8 @@ public class GameNetPackage
 public class GameNetScore
 {
 	public int score;
+	public string name;
+	public List<GameNetScore> scores = new List<GameNetScore>();
 }
 
 [Serializable]

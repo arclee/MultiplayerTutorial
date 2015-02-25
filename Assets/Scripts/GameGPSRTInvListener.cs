@@ -2,6 +2,7 @@
 using System.Collections;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi.Multiplayer;
+using System;
 
 public class GameGPSRTInvListener : RealTimeMultiplayerListener
 {
@@ -108,12 +109,21 @@ public class GameGPSRTInvListener : RealTimeMultiplayerListener
 		Debug.Log("OnRealTimeMessageReceived:" + " isReliable:" + isReliable + " senderId:"+senderId
 		          + data);
 
-		
 		GameNetPackage ogk = (GameNetPackage)GameNetPackageTest.ByteArrayToObject(data);		
 		Debug.Log(ogk.cmdtype);
+
+		
+		//Type ttt = Type.GetType(ogk.cmdtype.ToString());
+		//GameNetScore ogs = (int)Convert.ChangeType(d, typeof(int));
+
 		GameNetScore ogs = (GameNetScore)ogk.data;
 		Debug.Log(ogs.score);
-		gameGPS.debugText.text = ogk.cmdtype.ToString() + " " + ogs.score.ToString();
+		gameGPS.debugText.text = ogk.cmdtype.ToString() + " " + ogs.name;
+
+		for (int i = 0; i < ogs.scores.Count; i++)
+		{
+			gameGPS.debugText.text = gameGPS.debugText.text + " " + ogs.scores[i].name;
+		}
 	}
 
 

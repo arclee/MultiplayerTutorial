@@ -3,6 +3,7 @@ using System.Collections;
 using System;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi.Multiplayer;
+using GooglePlayGames.BasicApi.SavedGame;
 
 public class GameGPS : MonoBehaviour {
 	
@@ -16,6 +17,8 @@ public class GameGPS : MonoBehaviour {
 	Invitation myInvitation;
 	
 	GameGPSRTInvListener el = new GameGPSRTInvListener();
+
+	public string sendvalue = "0";
 	public TextMesh debugText; 
 	void Awake()
 	{
@@ -42,6 +45,7 @@ public class GameGPS : MonoBehaviour {
 
 		GooglePlayGames.BasicApi.PlayGamesClientConfiguration config = new GooglePlayGames.BasicApi.PlayGamesClientConfiguration.Builder()
 			// registers a callback to handle game invitations.
+			.EnableSavedGames()
 			.WithInvitationDelegate(OnInvitationReceived) 
 				.Build();
 		
@@ -205,6 +209,49 @@ public class GameGPS : MonoBehaviour {
 
 	}
 
+	void SendPackage()
+	{
+		
+		GameNetPackage gk = new GameNetPackage();
+		gk.cmdtype = 123;
+		
+		GameNetScore gns = new GameNetScore();
+		gns.score = 9987;
+		gns.name = sendvalue;
+		gk.data = gns;
+
+		for (int i = 0; i < 10; i++)
+		{
+			GameNetScore ss = new GameNetScore();
+			ss.name = "name" + i.ToString();
+			gns.scores.Add(ss);
+		}
+
+		byte[] inbyte = GameNetPackageTest.ObjectToByteArray(gk);
+		bool reliable = true;
+		PlayGamesPlatform.Instance.RealTime.SendMessageToAll(reliable, inbyte);
+	}
+
+	void ShowSelectUI()
+	{
+		uint maxNumToDisplay = 5;
+		bool allowCreateNew = false;
+		bool allowDelete = true;
+		
+		ISavedGameClient savedGameClient = PlayGamesPlatform.Instance.SavedGame;
+		savedGameClient.ShowSelectSavedGameUI("Select saved game",
+		                                      maxNumToDisplay,
+		                                      allowCreateNew,
+		                                      allowDelete,
+		                                      OnSavedGameSelected);
+	}
+	public void OnSavedGameSelected (SelectUIStatus status, ISavedGameMetadata game) {
+		if (status == SelectUIStatus.SavedGameSelected) {
+			// handle selected game save
+		} else {
+			// handle cancel or error
+		}
+	}
 	void OnGUI()
 	{
 		Matrix4x4 _matrix = GUI.matrix;
@@ -228,8 +275,19 @@ public class GameGPS : MonoBehaviour {
 		{
 			RealTimeMatchLeaveRoom();
 		}
-
 		
+		if (GUI.Button(new Rect (0, 300, 200, 50), "Send Package"))
+		{
+			SendPackage();
+		}
+
+		sendvalue = GUI.TextField(new Rect (0, 350, 200, 50), sendvalue);
+		
+		if (GUI.Button(new Rect (250, 0, 200, 50), "Cloud Load"))
+		{
+			ShowSelectUI();
+		}
+
 		if (myInvitation != null)
 		{
 			// show the popup
